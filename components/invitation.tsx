@@ -54,6 +54,22 @@ export function Invitation() {
         <div className="hero-portrait" aria-label="A whimsical sun illustration representing Makarius"><div className="sun-halo" /><div className="sun-face"><span className="eye left" /><span className="eye right" /><span className="cheek left" /><span className="cheek right" /><span className="smile" /></div><div className="portrait-spark spark-a">✦</div><div className="portrait-spark spark-b">·</div></div>
       </section>
 
+      <section className="growth-section section-pad" aria-labelledby="growth-title">
+        <div className="section-number">01 / 04</div>
+        <div className="growth-intro">
+          <p className="eyebrow"><span className="eyebrow-line" /> Watch me grow</p>
+          <h2 id="growth-title">From my first<br /><em>little hello.</em></h2>
+          <p>Every year brings a new smile, a new story, and another reason to celebrate the people who love me.</p>
+        </div>
+        <div className="growth-reel" aria-label="An animated timeline showing Makarius growing from a baby into a little boy">
+          <div className="growth-orbit" aria-hidden="true" />
+          <div className="growth-portrait growth-baby" aria-hidden="true"><div className="growth-face"><span className="growth-eye eye-left" /><span className="growth-eye eye-right" /><span className="growth-cheek cheek-left" /><span className="growth-cheek cheek-right" /><span className="growth-smile" /></div></div>
+          <div className="growth-portrait growth-toddler" aria-hidden="true"><div className="growth-face"><span className="growth-eye eye-left" /><span className="growth-eye eye-right" /><span className="growth-cheek cheek-left" /><span className="growth-cheek cheek-right" /><span className="growth-smile" /></div></div>
+          <div className="growth-caption"><span className="growth-year growth-year-baby">2025 · hello, world</span><span className="growth-year growth-year-toddler">2026 · look at me now</span></div>
+          <div className="growth-dots" aria-hidden="true"><span /><span /><span /></div>
+        </div>
+      </section>
+
       <section className="request-section section-pad" id="request" aria-labelledby="request-title"><div className="section-number">01 / 03</div><div className="request-grid"><div><p className="eyebrow"><span className="eyebrow-line" /> A special little request</p><h2 id="request-title">Would you help me<br /><em>find my way?</em></h2></div><div className="request-letter"><p>Hi! I’m <strong>Makarius Kleon Andrade</strong>, and I’m turning one soon.</p><p>As I grow, I’ll need someone kind, loving, and a little bit fun to guide me through life. Someone who will cheer for my tiny wins, teach me big lessons, and help me grow in faith.</p><p>My family thinks that person could be <strong>you.</strong></p><div className="signature">with love, <span>Makarius</span></div></div></div></section>
 
       <section className="journey-section section-pad" aria-labelledby="journey-title"><div className="section-number">02 / 03</div><div className="journey-card"><div className="journey-icon"><Heart aria-hidden="true" /></div><div><p className="eyebrow"><span className="eyebrow-line" /> The meaningful part</p><h2 id="journey-title">A little guide.<br /><em>A lifelong light.</em></h2><p className="journey-copy">Being a godparent is more than a title. It’s a promise to be there—with love, wisdom, prayers, and maybe the occasional treat when Mama isn’t looking.</p><div className="values"><span>Faith</span><span>Kindness</span><span>Joy</span><span>Always</span></div></div></div></section>
