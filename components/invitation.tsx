@@ -37,12 +37,11 @@ export function Invitation() {
   }
 
   return (
-    <main className="personal-invite invite-step" aria-labelledby="invite-title">
+    <main className="personal-invite invite-step" aria-label="Makarius invitation">
       <div className="floating-star star-one" aria-hidden="true">✦</div>
       <div className="floating-star star-two" aria-hidden="true">✧</div>
       <div className="personal-card invite-card">
         <p className="personal-eyebrow">A special message for you</p>
-        <h1 id="invite-title">Hi, <em>special one!</em></h1>
         <p className="personal-message">I&apos;m Makarius Kleon Andrade. I may be little, but I have a very big question for someone very special.</p>
         <div className="baby-picture" role="img" aria-label="A sweet baby photo placeholder with a growing-up animation">
           <div className="picture-glow" aria-hidden="true" />
