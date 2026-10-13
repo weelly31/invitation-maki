@@ -1,87 +1,74 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowDown, ArrowRight, CalendarDays, Check, ChevronDown, Cross, Heart, Sparkles, Sun, X } from 'lucide-react'
-
-const details = [
-  { icon: CalendarDays, label: 'The day', value: 'Date to be announced' },
-  { icon: Sun, label: 'The time', value: 'Time to be announced' },
-  { icon: Cross, label: 'The place', value: 'Venue to be announced' },
-]
+import { FormEvent, useState } from 'react'
+import { ArrowRight, Check, Heart, Sparkles } from 'lucide-react'
 
 export function Invitation() {
-  const [opened, setOpened] = useState(false)
-  const [accepted, setAccepted] = useState(false)
-  const [noCount, setNoCount] = useState(0)
+  const [name, setName] = useState('')
+  const [draftName, setDraftName] = useState('')
+  const [step, setStep] = useState<'name' | 'invite' | 'thanks'>('name')
 
-  const sayYes = () => {
-    setAccepted(true)
-    window.setTimeout(() => document.getElementById('celebration')?.scrollIntoView({ behavior: 'smooth' }), 80)
+  const submitName = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const trimmedName = draftName.trim()
+    if (!trimmedName) return
+    setName(trimmedName)
+    setStep('invite')
   }
 
-  const playfulNo = () => setNoCount((count) => count + 1)
-  const noLabel = ['Maybe later', 'Let me think...', 'Ask me again?', 'I’m warming up!', 'Yes is right there →'][Math.min(noCount, 4)]
-
-  if (!opened) {
+  if (step === 'name') {
     return (
-      <main className="invite-shell welcome-screen" aria-labelledby="welcome-title">
-        <div className="star-field" aria-hidden="true"><span /><span /><span /><span /><span /></div>
-        <div className="welcome-orbit orbit-one" aria-hidden="true" />
-        <div className="welcome-orbit orbit-two" aria-hidden="true" />
-        <div className="welcome-content">
-          <p className="eyebrow light-eyebrow"><Sparkles aria-hidden="true" /> A little invitation from a little boy</p>
-          <div className="baby-sun" aria-hidden="true"><Sun /></div>
-          <p className="welcome-kicker">You have been chosen for something special</p>
-          <h1 id="welcome-title">Will you be my<br /><em>Ninong or Ninang?</em></h1>
-          <p className="welcome-name">Makarius Kleon Andrade</p>
-          <button className="open-button" onClick={() => setOpened(true)}>
-            Open your invitation <ArrowRight data-icon="inline-end" />
-          </button>
-          <p className="tiny-note">A tiny request with a very big heart</p>
+      <main className="personal-invite name-step" aria-labelledby="name-title">
+        <div className="floating-star star-one" aria-hidden="true">✦</div>
+        <div className="floating-star star-two" aria-hidden="true">✧</div>
+        <div className="personal-card name-card">
+          <div className="mini-sun" aria-hidden="true"><Sparkles /></div>
+          <p className="personal-eyebrow">A little message for you</p>
+          <h1 id="name-title">Before we begin,<br /><em>what&apos;s your name?</em></h1>
+          <p className="personal-subtitle">I have something special to ask you.</p>
+          <form className="name-form" onSubmit={submitName}>
+            <label htmlFor="guest-name">Your name</label>
+            <input id="guest-name" value={draftName} onChange={(event) => setDraftName(event.target.value)} placeholder="Type your name" autoComplete="name" autoFocus />
+            <button type="submit">Continue <ArrowRight data-icon="inline-end" /></button>
+          </form>
         </div>
-        <div className="welcome-footer"><span>01</span><span className="footer-line" /><span>First birthday & dedication</span></div>
+      </main>
+    )
+  }
+
+  if (step === 'thanks') {
+    return (
+      <main className="personal-invite thanks-step" aria-labelledby="thanks-title">
+        <div className="personal-card thanks-card">
+          <div className="thanks-icon" aria-hidden="true"><Check /></div>
+          <p className="personal-eyebrow">From the bottom of my little heart</p>
+          <h1 id="thanks-title">Thank you, <em>{name}.</em></h1>
+          <p className="personal-subtitle">I&apos;m so happy you said yes. I can&apos;t wait for all the hugs, laughs, and memories we&apos;ll share.</p>
+          <div className="heart-row" aria-hidden="true"><Heart /><Heart /><Heart /></div>
+        </div>
       </main>
     )
   }
 
   return (
-    <main className="invite-shell" id="top">
-      <div className="ambient ambient-a" aria-hidden="true" /><div className="ambient ambient-b" aria-hidden="true" />
-      <nav className="top-nav" aria-label="Invitation navigation"><span className="nav-mark">MK<span>.</span></span><span className="nav-caption">A very special request</span><a href="#question">The big question <ArrowDown aria-hidden="true" /></a></nav>
-
-      <section className="hero-section section-pad" aria-labelledby="hero-title">
-        <div className="hero-copy"><p className="eyebrow"><span className="eyebrow-line" /> A note from Makarius</p><h1 id="hero-title">Dear <em>favorite</em><br />grown-up,</h1><p className="hero-lead">I may be small, but I have a big question for someone very special.</p><button className="text-link" onClick={() => document.getElementById('request')?.scrollIntoView({ behavior: 'smooth' })}>Read my little request <ArrowDown data-icon="inline-end" /></button></div>
-        <div className="hero-portrait" aria-label="A whimsical sun illustration representing Makarius"><div className="sun-halo" /><div className="sun-face"><span className="eye left" /><span className="eye right" /><span className="cheek left" /><span className="cheek right" /><span className="smile" /></div><div className="portrait-spark spark-a">✦</div><div className="portrait-spark spark-b">·</div></div>
-      </section>
-
-      <section className="growth-section section-pad" aria-labelledby="growth-title">
-        <div className="section-number">01 / 04</div>
-        <div className="growth-intro">
-          <p className="eyebrow"><span className="eyebrow-line" /> Watch me grow</p>
-          <h2 id="growth-title">From my first<br /><em>little hello.</em></h2>
-          <p>Every year brings a new smile, a new story, and another reason to celebrate the people who love me.</p>
+    <main className="personal-invite invite-step" aria-labelledby="invite-title">
+      <div className="floating-star star-one" aria-hidden="true">✦</div>
+      <div className="floating-star star-two" aria-hidden="true">✧</div>
+      <div className="personal-card invite-card">
+        <p className="personal-eyebrow">A special message for you</p>
+        <h1 id="invite-title">Hi, <em>{name}!</em></h1>
+        <p className="personal-message">I&apos;m Makarius Kleon Andrade. I may be little, but I have a very big question for someone very special.</p>
+        <div className="baby-picture" role="img" aria-label="A sweet baby photo placeholder with a growing-up animation">
+          <div className="picture-glow" aria-hidden="true" />
+          <img src="/placeholder-user.jpg" alt="Makarius as a baby" />
+          <span className="picture-caption">watch me grow</span>
         </div>
-        <div className="growth-reel" aria-label="An animated timeline showing Makarius growing from a baby into a little boy">
-          <div className="growth-orbit" aria-hidden="true" />
-          <div className="growth-portrait growth-baby" aria-hidden="true"><div className="growth-face"><span className="growth-eye eye-left" /><span className="growth-eye eye-right" /><span className="growth-cheek cheek-left" /><span className="growth-cheek cheek-right" /><span className="growth-smile" /></div></div>
-          <div className="growth-portrait growth-toddler" aria-hidden="true"><div className="growth-face"><span className="growth-eye eye-left" /><span className="growth-eye eye-right" /><span className="growth-cheek cheek-left" /><span className="growth-cheek cheek-right" /><span className="growth-smile" /></div></div>
-          <div className="growth-caption"><span className="growth-year growth-year-baby">2025 · hello, world</span><span className="growth-year growth-year-toddler">2026 · look at me now</span></div>
-          <div className="growth-dots" aria-hidden="true"><span /><span /><span /></div>
-        </div>
-      </section>
-
-      <section className="request-section section-pad" id="request" aria-labelledby="request-title"><div className="section-number">01 / 03</div><div className="request-grid"><div><p className="eyebrow"><span className="eyebrow-line" /> A special little request</p><h2 id="request-title">Would you help me<br /><em>find my way?</em></h2></div><div className="request-letter"><p>Hi! I’m <strong>Makarius Kleon Andrade</strong>, and I’m turning one soon.</p><p>As I grow, I’ll need someone kind, loving, and a little bit fun to guide me through life. Someone who will cheer for my tiny wins, teach me big lessons, and help me grow in faith.</p><p>My family thinks that person could be <strong>you.</strong></p><div className="signature">with love, <span>Makarius</span></div></div></div></section>
-
-      <section className="journey-section section-pad" aria-labelledby="journey-title"><div className="section-number">02 / 03</div><div className="journey-card"><div className="journey-icon"><Heart aria-hidden="true" /></div><div><p className="eyebrow"><span className="eyebrow-line" /> The meaningful part</p><h2 id="journey-title">A little guide.<br /><em>A lifelong light.</em></h2><p className="journey-copy">Being a godparent is more than a title. It’s a promise to be there—with love, wisdom, prayers, and maybe the occasional treat when Mama isn’t looking.</p><div className="values"><span>Faith</span><span>Kindness</span><span>Joy</span><span>Always</span></div></div></div></section>
-
-      <section className="question-section section-pad" id="question" aria-labelledby="question-title"><div className="question-cloud cloud-left" aria-hidden="true" /><div className="question-cloud cloud-right" aria-hidden="true" /><div className="section-number">03 / 03</div><p className="eyebrow centered"><span className="eyebrow-line" /> The big question <span className="eyebrow-line" /></p><h2 id="question-title">Will you be my<br /><em>Ninong or Ninang?</em></h2><p className="question-sub">I promise to make it worth it. There will be hugs,<br className="desktop-only" /> giggles, and a lifetime of little updates.</p><div className="answer-buttons"><button className="yes-button" onClick={sayYes}><Sparkles data-icon="inline-start" /> YES, I’LL BE YOUR GODPARENT! <Sparkles data-icon="inline-end" /></button><button className="maybe-button" onClick={playfulNo} aria-label={noLabel}>{noLabel} <X data-icon="inline-end" /></button></div>{noCount > 0 && <p className="playful-hint" role="status">Psst... the sparkly button is the one I’m hoping for.</p>}</section>
-
-      <section className={`celebration-section section-pad ${accepted ? 'is-accepted' : ''}`} id="celebration" aria-live="polite"><div className="celebration-confetti" aria-hidden="true"><span>✦</span><span>✧</span><span>•</span><span>✦</span><span>·</span></div><div className="celebration-badge"><Check aria-hidden="true" /></div><p className="eyebrow centered"><span className="eyebrow-line" /> It’s a yes! <span className="eyebrow-line" /></p><h2>{accepted ? <>You just made my<br /><em>little world brighter.</em></> : <>The happiest<br /><em>yes ever.</em></>}</h2><p className="celebration-copy">Thank you for saying yes to being part of my story. I can’t wait for all the memories we’ll make together.</p><div className="details-grid">{details.map(({ icon: Icon, label, value }) => <div className="detail-item" key={label}><Icon aria-hidden="true" /><span>{label}</span><strong>{value}</strong></div>)}</div><button className="save-button" onClick={() => window.print()}><CalendarDays data-icon="inline-start" /> Save the date <ArrowRight data-icon="inline-end" /></button></section>
-
-      <footer className="invite-footer"><span>MK<span className="nav-mark-dot">.</span></span><span>Made with a little love for a big milestone</span><a href="#top">Back to top ↑</a></footer>
+        <p className="question-kicker">With all my tiny heart...</p>
+        <h2>Will you be my<br /><em>Ninong or Ninang?</em></h2>
+        <button className="yes-button" onClick={() => setStep('thanks')}><Sparkles data-icon="inline-start" /> Yes, I&apos;d love to! <Sparkles data-icon="inline-end" /></button>
+      </div>
     </main>
   )
 }
 
 export default Invitation
-
