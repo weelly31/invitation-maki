@@ -977,22 +977,37 @@ em { color: #cfab78; font-style: italic; }
 }
 
 .replay-book-button {
-  background: transparent;
-  border: 1px solid rgba(226, 196, 143, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  white-space: nowrap;
+  background: rgba(226, 196, 143, 0.12);
+  border: 1.5px solid rgba(226, 196, 143, 0.42);
   border-radius: 999px;
-  color: #e2c48f;
-  font: 600 0.74rem/1 Arial, sans-serif;
+  color: #f1cf98;
+  font: 700 0.76rem/1 Arial, sans-serif;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 0.75rem 1.4rem;
+  padding: 0.85rem 1.6rem;
   cursor: pointer;
-  transition: all 0.25s;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.replay-book-button:hover {
-  background: rgba(226, 196, 143, 0.15);
+.replay-book-button:hover,
+.replay-book-button:focus-visible {
+  background: rgba(226, 196, 143, 0.22);
   border-color: #e2c48f;
+  color: #fffdfa;
   transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+}
+
+.replay-book-button svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* Book Page Footer Note */
