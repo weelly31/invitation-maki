@@ -42,7 +42,7 @@ export function Invitation() {
         <div className="personal-card thanks-card">
           <div className="thanks-icon" aria-hidden="true"><Check /></div>
           <p className="personal-eyebrow">From the bottom of my little heart</p>
-          <h1 id="thanks-title">Thank you, <em>{name}.</em></h1>
+          <h1 id="thanks-title">Thank you, <em>Ninang/Ninong {name}!</em></h1>
           <p className="personal-subtitle">I&apos;m so happy you said yes. I can&apos;t wait for all the hugs, laughs, and memories we&apos;ll share.</p>
           <div className="heart-row" aria-hidden="true"><Heart /><Heart /><Heart /></div>
         </div>
