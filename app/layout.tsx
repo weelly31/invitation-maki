@@ -3,6 +3,13 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+  ),
   title: 'A Little Request from Makarius',
   description: 'A heartfelt invitation to become Makarius Kleon Andrade’s Ninong or Ninang.',
   icons: {
@@ -12,7 +19,26 @@ export const metadata: Metadata = {
         type: 'image/svg+xml',
       },
     ],
-    apple: '/icon.svg',
+    apple: '/apple-icon.png',
+  },
+  openGraph: {
+    title: 'A Little Request from Makarius',
+    description: 'A heartfelt invitation to become Makarius Kleon Andrade’s Ninong or Ninang.',
+    images: [
+      {
+        url: '/apple-icon.png',
+        width: 800,
+        height: 800,
+        alt: 'Makarius Kleon Andrade',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'A Little Request from Makarius',
+    description: 'A heartfelt invitation to become Makarius Kleon Andrade’s Ninong or Ninang.',
+    images: ['/apple-icon.png'],
   },
 }
 
