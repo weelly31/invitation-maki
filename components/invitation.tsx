@@ -1,19 +1,190 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ArrowRight, Heart, Sparkles } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { ArrowRight, Heart, Sparkles, Volume2, VolumeX } from 'lucide-react'
 
 export function Invitation() {
   const [step, setStep] = useState<'creation' | 'reveal' | 'celebrate'>('creation')
+  const [soundEnabled, setSoundEnabled] = useState(true)
+  const audioCtxRef = useRef<AudioContext | null>(null)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [step])
 
+  // Synthesize realistic drumroll + cymbal / celebration fanfare with Web Audio API
+  const playDrumroll = useCallback(() => {
+    if (!soundEnabled) return
+
+    try {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      if (!AudioCtx) return
+
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioCtx()
+      }
+      const ctx = audioCtxRef.current
+      if (ctx.state === 'suspended') {
+        ctx.resume()
+      }
+
+      const now = ctx.currentTime
+      const duration = 2.4 // 2.4 seconds drumroll
+      const totalHits = 44
+
+      // Roll: rapid snare/timpani hits with increasing frequency and volume
+      for (let i = 0; i < totalHits; i++) {
+        const progress = i / totalHits
+        const time = now + Math.pow(progress, 1.1) * duration
+        const hitGain = 0.08 + Math.pow(progress, 1.8) * 0.42
+
+        // Drum tone body (tuned drum skin)
+        const osc = ctx.createOscillator()
+        const oscGain = ctx.createGain()
+        osc.type = 'triangle'
+        osc.frequency.setValueAtTime(140 + progress * 35, time)
+        osc.frequency.exponentialRampToValueAtTime(70, time + 0.045)
+
+        oscGain.gain.setValueAtTime(hitGain, time)
+        oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.05)
+
+        osc.connect(oscGain)
+        oscGain.connect(ctx.destination)
+        osc.start(time)
+        osc.stop(time + 0.055)
+
+        // Snare rattle noise
+        const bufferSize = Math.floor(ctx.sampleRate * 0.035)
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+        const output = noiseBuffer.getChannelData(0)
+        for (let s = 0; s < bufferSize; s++) {
+          output[s] = Math.random() * 2 - 1
+        }
+        const whiteNoise = ctx.createBufferSource()
+        whiteNoise.buffer = noiseBuffer
+
+        const filter = ctx.createBiquadFilter()
+        filter.type = 'highpass'
+        filter.frequency.value = 1000
+
+        const noiseGain = ctx.createGain()
+        noiseGain.gain.setValueAtTime(hitGain * 0.7, time)
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.035)
+
+        whiteNoise.connect(filter)
+        filter.connect(noiseGain)
+        noiseGain.connect(ctx.destination)
+
+        whiteNoise.start(time)
+        whiteNoise.stop(time + 0.04)
+      }
+
+      // Final crash / ta-da punch at the end of the roll
+      const crashTime = now + duration
+      const kickOsc = ctx.createOscillator()
+      const kickGain = ctx.createGain()
+      kickOsc.type = 'sine'
+      kickOsc.frequency.setValueAtTime(160, crashTime)
+      kickOsc.frequency.exponentialRampToValueAtTime(45, crashTime + 0.35)
+      kickGain.gain.setValueAtTime(0.7, crashTime)
+      kickGain.gain.exponentialRampToValueAtTime(0.001, crashTime + 0.38)
+      kickOsc.connect(kickGain)
+      kickGain.connect(ctx.destination)
+      kickOsc.start(crashTime)
+      kickOsc.stop(crashTime + 0.4)
+
+      // Cymbal splash on reveal
+      const cymbalSize = Math.floor(ctx.sampleRate * 1.2)
+      const cymbalBuffer = ctx.createBuffer(1, cymbalSize, ctx.sampleRate)
+      const cymbalData = cymbalBuffer.getChannelData(0)
+      for (let s = 0; s < cymbalSize; s++) {
+        cymbalData[s] = Math.random() * 2 - 1
+      }
+      const cymbalSource = ctx.createBufferSource()
+      cymbalSource.buffer = cymbalBuffer
+
+      const cymbalFilter = ctx.createBiquadFilter()
+      cymbalFilter.type = 'highpass'
+      cymbalFilter.frequency.value = 4500
+
+      const cymbalGain = ctx.createGain()
+      cymbalGain.gain.setValueAtTime(0.45, crashTime)
+      cymbalGain.gain.exponentialRampToValueAtTime(0.001, crashTime + 1.1)
+
+      cymbalSource.connect(cymbalFilter)
+      cymbalFilter.connect(cymbalGain)
+      cymbalGain.connect(ctx.destination)
+
+      cymbalSource.start(crashTime)
+      cymbalSource.stop(crashTime + 1.2)
+    } catch {
+      // Audio autoplay gracefully handled if disabled in browser
+    }
+  }, [soundEnabled])
+
+  // Soft celebration chime when clicking YES
+  const playCelebration = useCallback(() => {
+    if (!soundEnabled) return
+
+    try {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+      if (!AudioCtx) return
+
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioCtx()
+      }
+      const ctx = audioCtxRef.current
+      if (ctx.state === 'suspended') {
+        ctx.resume()
+      }
+
+      const notes = [523.25, 659.25, 783.99, 1046.5] // C5, E5, G5, C6
+      const now = ctx.currentTime
+      notes.forEach((freq, idx) => {
+        const time = now + idx * 0.12
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(freq, time)
+
+        gain.gain.setValueAtTime(0.28, time)
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.9)
+
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(time)
+        osc.stop(time + 0.95)
+      })
+    } catch {
+      // Graceful fallback
+    }
+  }, [soundEnabled])
+
+  const handleOpenReveal = () => {
+    playDrumroll()
+    setStep('reveal')
+  }
+
+  const handleYes = () => {
+    playCelebration()
+    setStep('celebrate')
+  }
+
   // PAGE 1 — GOD’S WONDERFUL CREATION 🌎☀️
   if (step === 'creation') {
     return (
       <main className="personal-invite creation-step" aria-labelledby="creation-title">
+        <button
+          type="button"
+          className={`sound-toggle-btn ${!soundEnabled ? 'muted' : ''}`}
+          onClick={() => setSoundEnabled((prev) => !prev)}
+          title={soundEnabled ? 'Sound is on' : 'Sound is muted'}
+          aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
+        >
+          {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+          <span>{soundEnabled ? 'Sound On' : 'Muted'}</span>
+        </button>
+
         <div className="floating-star star-one" aria-hidden="true">✦</div>
         <div className="floating-star star-two" aria-hidden="true">✧</div>
 
@@ -59,7 +230,7 @@ export function Invitation() {
           <button
             type="button"
             className="action-button surprise-button"
-            onClick={() => setStep('reveal')}
+            onClick={handleOpenReveal}
           >
             A Little Surprise Awaits <ArrowRight data-icon="inline-end" />
           </button>
@@ -72,6 +243,17 @@ export function Invitation() {
   if (step === 'reveal') {
     return (
       <main className="personal-invite reveal-step" aria-labelledby="reveal-title">
+        <button
+          type="button"
+          className={`sound-toggle-btn ${!soundEnabled ? 'muted' : ''}`}
+          onClick={() => setSoundEnabled((prev) => !prev)}
+          title={soundEnabled ? 'Sound is on' : 'Sound is muted'}
+          aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
+        >
+          {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+          <span>{soundEnabled ? 'Sound On' : 'Muted'}</span>
+        </button>
+
         <div className="floating-star star-one" aria-hidden="true">✦</div>
         <div className="floating-star star-two" aria-hidden="true">✧</div>
 
@@ -80,7 +262,6 @@ export function Invitation() {
             <span className="icon-emoji">💌</span>
           </div>
 
-          <p className="story-eyebrow">Drumroll, Please… 🥁</p>
           <h1 id="reveal-title" className="reveal-title">
             I Have a Special<br /><em>Question for You</em> 🤍
           </h1>
@@ -121,7 +302,7 @@ export function Invitation() {
           <button
             type="button"
             className="action-button yes-button"
-            onClick={() => setStep('celebrate')}
+            onClick={handleYes}
           >
             <Sparkles data-icon="inline-start" /> YES! I’D LOVE TO! 🤍 <Sparkles data-icon="inline-end" />
           </button>
@@ -133,6 +314,17 @@ export function Invitation() {
   // PAGE 3 / CELEBRATION — THANK YOU MESSAGE 🌎♡
   return (
     <main className="personal-invite thanks-step" aria-labelledby="thanks-title">
+      <button
+        type="button"
+        className={`sound-toggle-btn ${!soundEnabled ? 'muted' : ''}`}
+        onClick={() => setSoundEnabled((prev) => !prev)}
+        title={soundEnabled ? 'Sound is on' : 'Sound is muted'}
+        aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
+      >
+        {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+        <span>{soundEnabled ? 'Sound On' : 'Muted'}</span>
+      </button>
+
       <div className="floating-star star-one" aria-hidden="true">✦</div>
       <div className="floating-star star-two" aria-hidden="true">✧</div>
 
@@ -168,7 +360,10 @@ export function Invitation() {
         <button
           type="button"
           className="replay-button"
-          onClick={() => setStep('creation')}
+          onClick={() => {
+            playDrumroll()
+            setStep('creation')
+          }}
         >
           ← Read Our Story Again
         </button>
