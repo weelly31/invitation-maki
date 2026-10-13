@@ -43,10 +43,10 @@ export function Invitation() {
       <div className="personal-card invite-card">
         <p className="personal-eyebrow">A special message for you</p>
         <p className="personal-message">I&apos;m Makarius Kleon Andrade. I may be little, but I have a very big question for someone very special.</p>
-        <div className="baby-picture" role="img" aria-label="A sweet baby photo placeholder with a growing-up animation">
+        <div className="baby-picture" role="img" aria-label="A sweet photo of Makarius as a baby">
           <div className="picture-glow" aria-hidden="true" />
-          <img src="/placeholder-user.jpg" alt="Makarius as a baby" />
-          <span className="picture-caption">watch me grow</span>
+          <img src="/images/baby-photo.png" alt="Makarius crawling in a light embroidered shirt" />
+          <span className="picture-caption">my little world</span>
         </div>
         <p className="question-kicker">With all my tiny heart...</p>
         <h2>Will You Be My<br /><em>Ninong/Ninang?</em></h2>
