@@ -472,7 +472,8 @@ export function Invitation() {
                 className="replay-book-button"
                 onClick={handleReadAgain}
               >
-                <BookOpen size={14} /> <span>Read Our Story Again</span>
+                <BookOpen size={14} />
+                <span>Read Our Story Again</span>
               </button>
             </article>
           )}
