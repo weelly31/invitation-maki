@@ -340,7 +340,7 @@ export function Invitation() {
 
           <footer className="book-page-footer">
             <span className="page-dot">❦</span>
-            <span className="page-footer-note">Makarius’ Story of Faith & Love</span>
+            <span className="page-footer-note">Makarius’ Story of God's Wonderful Creation</span>
             <span className="page-dot">❦</span>
           </footer>
         </div>
