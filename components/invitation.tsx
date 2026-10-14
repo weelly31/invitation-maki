@@ -1,16 +1,362 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { ArrowRight, Heart, Sparkles, Volume2, VolumeX, BookOpen } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { ArrowRight, Heart, Sparkles, Volume2, VolumeX, BookOpen, Music } from 'lucide-react'
 
 export function Invitation() {
   const [step, setStep] = useState<'creation' | 'reveal' | 'celebrate'>('creation')
+  const [hasOpened, setHasOpened] = useState(false) 
   const [soundEnabled, setSoundEnabled] = useState(true)
-  const audioCtxRef = useRef<AudioContext | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [step])
+
+  
+  const handleStartExperience = () => {
+    setHasOpened(true)
+    if (audioRef.current && soundEnabled) {
+      audioRef.current.play().catch(() => {})
+    }
+  }
+
+  useEffect(() => {
+    if (audioRef.current && hasOpened) {
+      if (soundEnabled) {
+        audioRef.current.play().catch(() => {})
+      } else {
+        audioRef.current.pause()
+      }
+    }
+  }, [soundEnabled, hasOpened])
+
+  const handleOpenReveal = () => {
+    setStep('reveal')
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const handleYes = () => {
+    setStep('celebrate')
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const handleReadAgain = () => {
+    setStep('creation')
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  return (
+    <div className="storybook-universe">
+      {/* Background Audio */}
+      <audio
+        ref={audioRef}
+        src="music/theblessing.mp3"
+        loop
+        preload="auto"
+      />
+
+      {/* COVER / WELCOME OVERLAY  */}
+      {!hasOpened && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-md text-white p-6 text-center">
+          <div className="max-w-md w-full bg-slate-800/80 border border-amber-200/30 p-8 rounded-2xl shadow-2xl flex flex-col items-center">
+            <div className="w-16 h-16 rounded-full bg-amber-100/10 flex items-center justify-center mb-4 text-amber-300 animate-pulse">
+              <BookOpen size={32} />
+            </div>
+            <h2 className="text-2xl font-serif text-amber-100 mb-2">
+              You’re Invited to a Story of God’s Wonderful Creation
+            </h2>
+            <p className="text-sm text-slate-300 mb-6">
+              A special message for someone special is inside.
+            </p>
+            <button
+              type="button"
+              onClick={handleStartExperience}
+              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-200 to-amber-400 text-slate-950 font-semibold shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2"
+            >
+              <Music size={18} />
+              <span>Open</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Sound Mute/Unmute button */}
+      <button
+        type="button"
+        className={`sound-toggle-btn ${!soundEnabled ? 'muted' : ''}`}
+        onClick={() => setSoundEnabled((prev) => !prev)}
+        title={soundEnabled ? 'Music is on' : 'Music is muted'}
+        aria-label={soundEnabled ? 'Mute music' : 'Unmute music'}
+      >
+        {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+        <span>{soundEnabled ? 'Music On' : 'Muted'}</span>
+      </button>
+
+      {/* Floating stars in celestial background */}
+      <div className="floating-star star-one" aria-hidden="true">✦</div>
+      <div className="floating-star star-two" aria-hidden="true">✧</div>
+      <div className="floating-star star-three" aria-hidden="true">⋆</div>
+      <div className="floating-star star-four" aria-hidden="true">✦</div>
+
+      {/* Storybook Outer Frame */}
+      <div className="storybook-wrapper">
+        <div className="book-spine-accent" aria-hidden="true" />
+        <div className="book-ribbon" aria-hidden="true">
+          <span className="ribbon-tail" />
+        </div>
+
+        <div className="storybook-frame">
+          <div className="book-gold-corners" aria-hidden="true" />
+
+          {/* PAGE 1 — GOD’S WONDERFUL CREATION */}
+          {step === 'creation' && (
+            <article className="storybook-page page-creation" aria-labelledby="creation-title">
+              <header className="page-chapter-header">
+                <div className="chapter-badge">
+                  <BookOpen size={13} />
+                  <span>Chapter I</span>
+                </div>
+                <p className="story-eyebrow">A Little Story for Someone Special</p>
+                <h1 id="creation-title" className="story-title">
+                  God’s Wonderful<br /><em>Creation</em> 🌎☀️
+                </h1>
+              </header>
+
+              <blockquote className="scripture-quote">
+                “In the beginning, God created the heavens and the earth…”
+              </blockquote>
+
+              <div className="creation-animated-showcase" aria-label="Animated illustration of God's Creation">
+                <div className="creation-sky">
+                  <div className="sun-pulse-orb" />
+                  <div className="creation-cloud c-1" />
+                  <div className="creation-cloud c-2" />
+                  <div className="twinkling-stars-row">
+                    <span className="star-sparkle s1">✦</span>
+                    <span className="star-sparkle s2">✧</span>
+                    <span className="star-sparkle s3">⋆</span>
+                    <span className="star-sparkle s4">✦</span>
+                  </div>
+                </div>
+
+                <div className="creation-ocean">
+                  <div className="wave wave-back" />
+                  <div className="wave wave-front" />
+                  <div className="swimming-fish f-1">🐟</div>
+                  <div className="swimming-fish f-2">🐠</div>
+                </div>
+
+                <div className="creation-garden">
+                  <div className="flower-item fl-1">
+                    <span className="fl-stem" />
+                    <span className="fl-bloom">🌸</span>
+                  </div>
+                  <div className="flower-item fl-2">
+                    <span className="fl-stem" />
+                    <span className="fl-bloom">🌼</span>
+                  </div>
+                  <div className="flower-item fl-3">
+                    <span className="fl-stem" />
+                    <span className="fl-bloom">🌷</span>
+                  </div>
+                  <div className="floating-petal p-1">🌸</div>
+                  <div className="floating-petal p-2">🍃</div>
+                </div>
+              </div>
+
+              <p className="story-text">
+                He painted the skies with beautiful colors, made the flowers bloom, filled the oceans with life, and placed the stars in the night sky.
+              </p>
+
+              <p className="story-text highlight-lead">
+                And among all the wonderful things He created, He gave Mommy and Daddy their most precious gift…
+              </p>
+
+              <div className="maki-gift-showcase">
+                <div className="arrow-pointer-box" aria-hidden="true">
+                  <div className="pointer-bubble">
+                    <Sparkles size={13} />
+                    <span>Yes, it&apos;s ME!</span>
+                  </div>
+                  <svg className="curved-bouncy-arrow" viewBox="0 0 100 80" fill="none">
+                    <path
+                      d="M20,15 C45,8 75,25 65,62"
+                      stroke="#f1cf98"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      strokeDasharray="4 3"
+                    />
+                    <polygon points="56,56 66,72 74,56" fill="#f1cf98" />
+                  </svg>
+                </div>
+
+                <div className="maki-portrait-card">
+                  <div className="photo-halo-glow" aria-hidden="true" />
+                  <div className="maki-photo-frame">
+                    <img
+                      src="/images/baby-photo.png"
+                      alt="Baby Makarius smiling happily"
+                    />
+                  </div>
+                  <div className="maki-nameplate">
+                    <span className="nameplate-tag">ME! 🧸🤍</span>
+                    <span className="nameplate-name">Baby Makarius Kleon</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="story-text">
+                I’m just a little one discovering this big, beautiful world that God made. And as I grow, I know He has so many wonderful things planned for me.
+              </p>
+
+              <p className="story-text">
+                But today, I have a little something prepared for someone who holds a special place in my story…
+              </p>
+
+              <div className="surprise-teaser-card">
+                <p className="surprise-lead">Are you ready for a little surprise? ✨</p>
+                <p className="surprise-sub">There’s something I’d really love to ask you!</p>
+              </div>
+
+              <button
+                type="button"
+                className="action-button surprise-button"
+                onClick={handleOpenReveal}
+              >
+                A Little Surprise Awaits <ArrowRight data-icon="inline-end" />
+              </button>
+            </article>
+          )}
+
+          {/* PAGE 2 — THE BIG REVEAL */}
+          {step === 'reveal' && (
+            <article className="storybook-page page-reveal" aria-labelledby="reveal-title">
+              <header className="page-chapter-header">
+                <div className="chapter-badge">
+                  <Sparkles size={13} />
+                  <span>Chapter II</span>
+                </div>
+                <p className="story-eyebrow">A Special Question</p>
+                <h1 id="reveal-title" className="reveal-title">
+                  I Have a Special<br /><em>Question for You</em> 🤍
+                </h1>
+              </header>
+
+              <p className="story-text">
+                God has blessed me with the gift of life, a loving family, and a beautiful world to grow up in. And I believe that one of His sweetest blessings is the people He places in my life to love me, pray for me, and guide me closer to Him.
+              </p>
+
+              <p className="story-text">
+                Mommy and Daddy have someone very special in mind… someone they would love to be part of my journey as I grow in faith and discover God’s wonderful plans for me.
+              </p>
+
+              <div className="someone-badge-glow" aria-label="And that someone is YOU!">
+                <span className="glow-star">✨</span>
+                <span>And that someone is YOU!</span>
+                <span className="glow-star">✨</span>
+              </div>
+
+              <div className="proposal-plaque">
+                <div className="plaque-baby-avatar">
+                  <img src="/images/baby-photo.png" alt="Baby Maki" />
+                </div>
+
+                <div className="question-block">
+                  <p className="question-kicker">With all my tiny heart...</p>
+                  <h2 className="question-headline">
+                    Will You Be My<br />
+                    <em className="ninong-text">Ninang/Ninong?</em> 
+                  </h2>
+                  <p className="question-description">
+                    Will you be one of the special people who will pray for me, cheer for my little milestones, guide me in God’s ways, and remind me of His unfailing love throughout my life?
+                  </p>
+                </div>
+
+                <blockquote className="verse-ribbon">
+                  <p className="verse-quote">“Every good and perfect gift is from above.”</p>
+                  <cite className="verse-ref">— James 1:17</cite>
+                </blockquote>
+              </div>
+
+              <button
+                type="button"
+                className="action-button yes-button bounce-subtle"
+                onClick={handleYes}
+              >
+                <Sparkles data-icon="inline-start" /> YES! I’D LOVE TO! 🤍 <Sparkles data-icon="inline-end" />
+              </button>
+            </article>
+          )}
+
+          {/* PAGE 3 — THANK YOU MESSAGE */}
+          {step === 'celebrate' && (
+            <article className="storybook-page page-celebrate" aria-labelledby="thanks-title">
+              <div className="celebration-badge-sun" aria-hidden="true">
+                <Heart className="celebration-heart-svg" />
+              </div>
+
+              <header className="page-chapter-header">
+                <p className="story-eyebrow">My Heart Is Overflowing</p>
+                <h1 id="thanks-title" className="thanks-title">
+                  Thank you, <br />
+                  <em>Ninang/Ninong</em>
+                </h1>
+              </header>
+
+              <div className="thanks-parchment-box">
+                <p className="thanks-main-text">
+                  Yaaay! I can’t wait to make beautiful memories with you! Thank you for being part of God’s wonderful story for me. 🌎
+                </p>
+
+                <div className="heart-row" aria-hidden="true">
+                  <Heart />
+                  <Heart />
+                  <Heart />
+                </div>
+
+                <div className="thanks-signature-block">
+                  <span className="signature-salutation">With all my love,</span>
+                  <strong className="signature-name">Baby Maki ♡</strong>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="replay-book-button"
+                onClick={handleReadAgain}
+              >
+                <BookOpen size={14} />
+                <span>Read Our Story Again</span>
+              </button>
+            </article>
+          )}
+
+          <footer className="book-page-footer">
+            <span className="page-dot">❦</span>
+            <span className="page-footer-note">Makarius’ Story of Faith & Love</span>
+            <span className="page-dot">❦</span>
+          </footer>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Invitation
+
+
+ /* =========================================================================
+   * WEB AUDIO SYNTHESIS EFFECTS
+   * =========================================================================
+  
+  const audioCtxRef = useRef<AudioContext | null>(null)
 
   // Soft page flip sound with Web Audio
   const playPageTurn = useCallback(() => {
@@ -71,13 +417,11 @@ export function Invitation() {
       const duration = 2.4 // 2.4 seconds drumroll
       const totalHits = 44
 
-      // Roll: rapid snare/timpani hits with increasing frequency and volume
       for (let i = 0; i < totalHits; i++) {
         const progress = i / totalHits
         const time = now + Math.pow(progress, 1.1) * duration
         const hitGain = 0.08 + Math.pow(progress, 1.8) * 0.42
 
-        // Drum tone body (tuned drum skin)
         const osc = ctx.createOscillator()
         const oscGain = ctx.createGain()
         osc.type = 'triangle'
@@ -92,7 +436,6 @@ export function Invitation() {
         osc.start(time)
         osc.stop(time + 0.055)
 
-        // Snare rattle noise
         const bufferSize = Math.floor(ctx.sampleRate * 0.035)
         const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
         const output = noiseBuffer.getChannelData(0)
@@ -118,7 +461,6 @@ export function Invitation() {
         whiteNoise.stop(time + 0.04)
       }
 
-      // Final crash / ta-da punch at the end of the roll
       const crashTime = now + duration
       const kickOsc = ctx.createOscillator()
       const kickGain = ctx.createGain()
@@ -132,7 +474,6 @@ export function Invitation() {
       kickOsc.start(crashTime)
       kickOsc.stop(crashTime + 0.4)
 
-      // Cymbal splash on reveal
       const cymbalSize = Math.floor(ctx.sampleRate * 1.2)
       const cymbalBuffer = ctx.createBuffer(1, cymbalSize, ctx.sampleRate)
       const cymbalData = cymbalBuffer.getChannelData(0)
@@ -157,7 +498,7 @@ export function Invitation() {
       cymbalSource.start(crashTime)
       cymbalSource.stop(crashTime + 1.2)
     } catch {
-      // Audio autoplay gracefully handled if disabled in browser
+      // Audio autoplay gracefully handled
     }
   }, [soundEnabled])
 
@@ -177,7 +518,7 @@ export function Invitation() {
         ctx.resume()
       }
 
-      const notes = [523.25, 659.25, 783.99, 1046.5] // C5, E5, G5, C6
+      const notes = [523.25, 659.25, 783.99, 1046.5]
       const now = ctx.currentTime
       notes.forEach((freq, idx) => {
         const time = now + idx * 0.12
@@ -198,295 +539,4 @@ export function Invitation() {
       // Graceful fallback
     }
   }, [soundEnabled])
-
-  const handleOpenReveal = () => {
-    playDrumroll()
-    setStep('reveal')
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  const handleYes = () => {
-    playCelebration()
-    setStep('celebrate')
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  const handleReadAgain = () => {
-    playPageTurn()
-    setStep('creation')
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
-  return (
-    <div className="storybook-universe">
-      {/* Sound Mute/Unmute button */}
-      <button
-        type="button"
-        className={`sound-toggle-btn ${!soundEnabled ? 'muted' : ''}`}
-        onClick={() => setSoundEnabled((prev) => !prev)}
-        title={soundEnabled ? 'Sound is on' : 'Sound is muted'}
-        aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
-      >
-        {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
-        <span>{soundEnabled ? 'Sound On' : 'Muted'}</span>
-      </button>
-
-      {/* Floating stars in celestial background */}
-      <div className="floating-star star-one" aria-hidden="true">✦</div>
-      <div className="floating-star star-two" aria-hidden="true">✧</div>
-      <div className="floating-star star-three" aria-hidden="true">⋆</div>
-      <div className="floating-star star-four" aria-hidden="true">✦</div>
-
-      {/* Storybook Outer Frame with golden trim & ribbon */}
-      <div className="storybook-wrapper">
-        <div className="book-spine-accent" aria-hidden="true" />
-        <div className="book-ribbon" aria-hidden="true">
-          <span className="ribbon-tail" />
-        </div>
-
-        <div className="storybook-frame">
-          <div className="book-gold-corners" aria-hidden="true" />
-
-          {/* PAGE 1 — GOD’S WONDERFUL CREATION 🌎☀️ */}
-          {step === 'creation' && (
-            <article className="storybook-page page-creation" aria-labelledby="creation-title">
-              <header className="page-chapter-header">
-                <div className="chapter-badge">
-                  <BookOpen size={13} />
-                  <span>Chapter I</span>
-                </div>
-                <p className="story-eyebrow">A Little Story for Someone Special</p>
-                <h1 id="creation-title" className="story-title">
-                  God’s Wonderful<br /><em>Creation</em> 🌎☀️
-                </h1>
-              </header>
-
-              <blockquote className="scripture-quote">
-                “In the beginning, God created the heavens and the earth…”
-              </blockquote>
-
-              {/* Animated Creation Showcase illustration: Sky, Stars, Flowers, Ocean Waves */}
-              <div className="creation-animated-showcase" aria-label="Animated illustration of God's Creation">
-                <div className="creation-sky">
-                  <div className="sun-pulse-orb" />
-                  <div className="creation-cloud c-1" />
-                  <div className="creation-cloud c-2" />
-                  <div className="twinkling-stars-row">
-                    <span className="star-sparkle s1">✦</span>
-                    <span className="star-sparkle s2">✧</span>
-                    <span className="star-sparkle s3">⋆</span>
-                    <span className="star-sparkle s4">✦</span>
-                  </div>
-                </div>
-
-                <div className="creation-ocean">
-                  <div className="wave wave-back" />
-                  <div className="wave wave-front" />
-                  <div className="swimming-fish f-1">🐟</div>
-                  <div className="swimming-fish f-2">🐠</div>
-                </div>
-
-                <div className="creation-garden">
-                  <div className="flower-item fl-1">
-                    <span className="fl-stem" />
-                    <span className="fl-bloom">🌸</span>
-                  </div>
-                  <div className="flower-item fl-2">
-                    <span className="fl-stem" />
-                    <span className="fl-bloom">🌼</span>
-                  </div>
-                  <div className="flower-item fl-3">
-                    <span className="fl-stem" />
-                    <span className="fl-bloom">🌷</span>
-                  </div>
-                  <div className="floating-petal p-1">🌸</div>
-                  <div className="floating-petal p-2">🍃</div>
-                </div>
-              </div>
-
-              <p className="story-text">
-                He painted the skies with beautiful colors, made the flowers bloom, filled the oceans with life, and placed the stars in the night sky.
-              </p>
-
-              <p className="story-text highlight-lead">
-                And among all the wonderful things He created, He gave Mommy and Daddy their most precious gift…
-              </p>
-
-              {/* Playful Animated Arrow pointing directly to Maki's photo */}
-              <div className="maki-gift-showcase">
-                <div className="arrow-pointer-box" aria-hidden="true">
-                  <div className="pointer-bubble">
-                    <Sparkles size={13} />
-                    <span>Yes, it&apos;s ME!</span>
-                  </div>
-                  <svg className="curved-bouncy-arrow" viewBox="0 0 100 80" fill="none">
-                    <path
-                      d="M20,15 C45,8 75,25 65,62"
-                      stroke="#f1cf98"
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                      strokeDasharray="4 3"
-                    />
-                    <polygon points="56,56 66,72 74,56" fill="#f1cf98" />
-                  </svg>
-                </div>
-
-                <div className="maki-portrait-card">
-                  <div className="photo-halo-glow" aria-hidden="true" />
-                  <div className="maki-photo-frame">
-                    <img
-                      src="/images/baby-photo.png"
-                      alt="Baby Makarius smiling happily"
-                    />
-                  </div>
-                  <div className="maki-nameplate">
-                    <span className="nameplate-tag">ME! 🧸🤍</span>
-                    <span className="nameplate-name">Baby Makarius Kleon</span>
-                  </div>
-                </div>
-              </div>
-
-              <p className="story-text">
-                I’m just a little one discovering this big, beautiful world that God made. And as I grow, I know He has so many wonderful things planned for me.
-              </p>
-
-              <p className="story-text">
-                But today, I have a little something prepared for someone who holds a special place in my story…
-              </p>
-
-              <div className="surprise-teaser-card">
-                <p className="surprise-lead">Are you ready for a little surprise? ✨</p>
-                <p className="surprise-sub">There’s something I’d really love to ask you!</p>
-              </div>
-
-              <button
-                type="button"
-                className="action-button surprise-button"
-                onClick={handleOpenReveal}
-              >
-                A Little Surprise Awaits <ArrowRight data-icon="inline-end" />
-              </button>
-            </article>
-          )}
-
-          {/* PAGE 2 — THE BIG REVEAL 💌 */}
-          {step === 'reveal' && (
-            <article className="storybook-page page-reveal" aria-labelledby="reveal-title">
-              <header className="page-chapter-header">
-                <div className="chapter-badge">
-                  <Sparkles size={13} />
-                  <span>Chapter II</span>
-                </div>
-                <p className="story-eyebrow">A Special Question</p>
-                <h1 id="reveal-title" className="reveal-title">
-                  I Have a Special<br /><em>Question for You</em> 🤍
-                </h1>
-              </header>
-
-              <p className="story-text">
-                God has blessed me with the gift of life, a loving family, and a beautiful world to grow up in. And I believe that one of His sweetest blessings is the people He places in my life to love me, pray for me, and guide me closer to Him.
-              </p>
-
-              <p className="story-text">
-                Mommy and Daddy have someone very special in mind… someone they would love to be part of my journey as I grow in faith and discover God’s wonderful plans for me.
-              </p>
-
-              <div className="someone-badge-glow" aria-label="And that someone is YOU!">
-                <span className="glow-star">✨</span>
-                <span>And that someone is YOU!</span>
-                <span className="glow-star">✨</span>
-              </div>
-
-              <div className="proposal-plaque">
-                <div className="plaque-baby-avatar">
-                  <img src="/images/baby-photo.png" alt="Baby Maki" />
-                </div>
-
-                <div className="question-block">
-                  <p className="question-kicker">With all my tiny heart...</p>
-                  <h2 className="question-headline">
-                    Will You Be My<br />
-                    <em className="ninong-text">Ninang/Ninong?</em> 
-                  </h2>
-                  <p className="question-description">
-                    Will you be one of the special people who will pray for me, cheer for my little milestones, guide me in God’s ways, and remind me of His unfailing love throughout my life?
-                  </p>
-                </div>
-
-                <blockquote className="verse-ribbon">
-                  <p className="verse-quote">“Every good and perfect gift is from above.”</p>
-                  <cite className="verse-ref">— James 1:17</cite>
-                </blockquote>
-              </div>
-
-              <button
-                type="button"
-                className="action-button yes-button bounce-subtle"
-                onClick={handleYes}
-              >
-                <Sparkles data-icon="inline-start" /> YES! I’D LOVE TO! 🤍 <Sparkles data-icon="inline-end" />
-              </button>
-            </article>
-          )}
-
-          {/* PAGE 3 / CELEBRATION — THANK YOU MESSAGE 🌎♡ */}
-          {step === 'celebrate' && (
-            <article className="storybook-page page-celebrate" aria-labelledby="thanks-title">
-              <div className="celebration-badge-sun" aria-hidden="true">
-                <Heart className="celebration-heart-svg" />
-              </div>
-
-              <header className="page-chapter-header">
-                <p className="story-eyebrow">My Heart Is Overflowing</p>
-                <h1 id="thanks-title" className="thanks-title">
-                  Thank you, <br />
-                  <em>Ninang/Ninong</em>
-                </h1>
-              </header>
-
-              <div className="thanks-parchment-box">
-                <p className="thanks-main-text">
-                  Yaaay! I can’t wait to make beautiful memories with you! Thank you for being part of God’s wonderful story for me. 🌎
-                </p>
-
-                <div className="heart-row" aria-hidden="true">
-                  <Heart />
-                  <Heart />
-                  <Heart />
-                </div>
-
-                <div className="thanks-signature-block">
-                  <span className="signature-salutation">With all my love,</span>
-                  <strong className="signature-name">Baby Maki ♡</strong>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="replay-book-button"
-                onClick={handleReadAgain}
-              >
-                <BookOpen size={14} />
-                <span>Read Our Story Again</span>
-              </button>
-            </article>
-          )}
-
-          <footer className="book-page-footer">
-            <span className="page-dot">❦</span>
-            <span className="page-footer-note">Makarius’ Story of Faith & Love</span>
-            <span className="page-dot">❦</span>
-          </footer>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default Invitation
+  ========================================================================= */
