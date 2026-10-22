@@ -38,9 +38,48 @@ export function Invitation() {
     }
   }
 
+  const [showModal, setShowModal] = useState(false)
+  const [guestName, setGuestName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
+  const [accepted, setAccepted] = useState(false)
+
   const handleYes = () => {
-    setStep('celebrate')
-    if (typeof window !== 'undefined') {
+    setSaveError('')
+    setShowModal(true)
+  }
+
+  const handleConfirm = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const name = guestName.trim()
+    if (!name) {
+      setSaveError('Please tell me your name 🤍')
+      return
+    }
+    setSaving(true)
+    setSaveError('')
+    try {
+      const res = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Something went wrong.')
+      }
+      setAccepted(true)
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Something went wrong.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
+    if (accepted) {
+      setStep('celebrate')
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
@@ -336,6 +375,79 @@ export function Invitation() {
                 <span>Read Our Story Again</span>
               </button>
             </article>
+          )}
+
+          {showModal && (
+            <div
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-[#182824]/80 backdrop-blur-sm p-4 animate-in fade-in duration-300"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="rsvp-title"
+            >
+              <div className="relative w-full max-w-md rounded-3xl border border-[#e2c48f] bg-gradient-to-b from-[#fffdf9] to-[#f6f1e9] p-8 text-center shadow-2xl animate-in zoom-in-95 duration-300">
+                {!accepted ? (
+                  <form onSubmit={handleConfirm} className="flex flex-col items-center gap-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#e2c48f]/30 text-[#ad7658]">
+                      <Heart className="h-8 w-8" fill="currentColor" />
+                    </div>
+                    <h2 id="rsvp-title" className="font-serif text-2xl text-[#263936]">
+                      Yay! One last thing…
+                    </h2>
+                    <p className="text-sm text-[#65716c]">
+                      Please write your name so Baby Maki knows who said yes. 🤍
+                    </p>
+                    <input
+                      type="text"
+                      value={guestName}
+                      onChange={(e) => setGuestName(e.target.value)}
+                      maxLength={100}
+                      autoFocus
+                      placeholder="Your name"
+                      className="w-full rounded-xl border border-[#d8d8ca] bg-white px-4 py-3 text-center text-[#263936] outline-none focus:ring-2 focus:ring-[#c2a777]"
+                    />
+                    {saveError && <p className="text-sm text-[#ad7658]">{saveError}</p>}
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="w-full rounded-full bg-[#e2c48f] px-6 py-3 font-bold text-[#273d39] shadow-md transition hover:bg-[#f0d8ae] disabled:opacity-60"
+                    >
+                      {saving ? 'Saving…' : 'Confirm my YES 💖'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowModal(false)}
+                      disabled={saving}
+                      className="text-xs text-[#65716c] underline"
+                    >
+                      Not yet
+                    </button>
+                  </form>
+                ) : (
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#e2c48f]/30 text-[#ad7658] animate-pulse">
+                      <Sparkles className="h-8 w-8" />
+                    </div>
+                    <h2 id="rsvp-title" className="font-serif text-2xl text-[#263936]">
+                      Thank you, {guestName.trim()}!
+                    </h2>
+                    <p className="text-[#65716c]">
+                      Your YES has made my little heart so happy. Thank you for being part of God’s wonderful story for me. I can’t wait to make beautiful memories with you! 🌎
+                    </p>
+                    <div className="flex gap-2 text-[#ad7658]" aria-hidden="true">
+                      <Heart fill="currentColor" /><Heart fill="currentColor" /><Heart fill="currentColor" />
+                    </div>
+                    <p className="font-serif text-[#263936]">With all my love, Baby Maki ♡</p>
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="w-full rounded-full bg-[#e2c48f] px-6 py-3 font-bold text-[#273d39] shadow-md transition hover:bg-[#f0d8ae]"
+                    >
+                      Continue 🤍
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
           <footer className="book-page-footer">
